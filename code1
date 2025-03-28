@@ -1,0 +1,41 @@
+import pyautogui
+import time
+import win32gui
+import win32con
+
+# 🔹 저장할 단톡방 이름 (원하는 단톡방 이름으로 변경)
+TARGET_CHATROOM = "내가 원하는 단톡방"
+
+# 1. 카카오톡 단톡방 찾기 함수
+def find_chatroom_window():
+    def callback(hwnd, extra):
+        title = win32gui.GetWindowText(hwnd)  # 창 제목 가져오기
+        if TARGET_CHATROOM in title:  # 특정 단톡방 찾기
+            extra.append(hwnd)
+
+    hwnds = []
+    win32gui.EnumWindows(callback, hwnds)
+    return hwnds[0] if hwnds else None
+
+# 2. 단톡방 창 활성화 및 대화 저장 실행
+def save_chat():
+    hwnd = find_chatroom_window()
+    if hwnd:
+        win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)  # 창이 최소화되어 있으면 복구
+        win32gui.SetForegroundWindow(hwnd)  # 창을 최상위로 이동
+        time.sleep(1)  # 활성화될 시간 확보
+
+        # 3. Ctrl + S 입력 (대화 내용 저장)
+        pyautogui.hotkey('ctrl', 's')
+        time.sleep(1)  # 저장창이 뜨는 시간 대기
+
+        # 4. 파일 저장 (기본 파일명으로 저장)
+        pyautogui.press('enter')
+
+        print(f"✅ '{TARGET_CHATROOM}' 대화 저장 완료!")
+    else:
+        print(f"❌ '{TARGET_CHATROOM}' 창을 찾을 수 없습니다.")
+
+# 실행
+if __name__ == "__main__":
+    save_chat()

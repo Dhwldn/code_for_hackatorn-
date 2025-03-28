@@ -1,0 +1,2 @@
+pip install pyautogui pyperclip pygetwindow pywin32
+python save_kakao_chat.py
